@@ -26,7 +26,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import br.edu.ifsp.scl.bes.prdm.intents.Extras.PARAMETER_EXTRA
 import br.edu.ifsp.scl.bes.prdm.intents.databinding.ActivityMainBinding
-import java.net.URI
 
 class MainActivity : AppCompatActivity() {
     private lateinit var parameterArl: ActivityResultLauncher<Intent>
@@ -65,18 +64,18 @@ class MainActivity : AppCompatActivity() {
                     callPhone(true)
                 } else {
                     Toast.makeText(
-                        this, "Permission required to call a number!",
+                        this,
+                        "Permission required to call a number!",
                         Toast.LENGTH_SHORT
                     ).show()
                 }
             }
 
-        pickImageArl =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    startActivity(Intent(ACTION_VIEW, result.data?.data))
-                }
+        pickImageArl = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == RESULT_OK) {
+                startActivity(Intent(ACTION_VIEW, result.data?.data))
             }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -97,12 +96,11 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.call_mi -> {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (checkSelfPermission(CALL_PHONE) == PERMISSION_GRANTED) {
                         callPhone(true)
                     }
                     else {
-                        // Solicitar a permissão para o usuário
                         cppArl.launch(CALL_PHONE)
                     }
                 }
@@ -121,15 +119,15 @@ class MainActivity : AppCompatActivity() {
                 val imageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).path
                 val pickImageIntent = Intent(ACTION_PICK)
                 pickImageIntent.setDataAndType(Uri.parse(imageDir), "image/*")
-                startActivity(pickImageIntent)
+                pickImageArl.launch(pickImageIntent)
                 true
             }
 
             R.id.chooser_mi -> {
-                val choserIntent = Intent(ACTION_CHOOSER)
-                choserIntent.putExtra(EXTRA_TITLE, "Choose your favorite navigator")
-                choserIntent.putExtra(EXTRA_INTENT, browserIntent())
-                startActivity(choserIntent)
+                val chooserIntent = Intent(ACTION_CHOOSER)
+                chooserIntent.putExtra(EXTRA_TITLE, "Choose your favorite navigator")
+                chooserIntent.putExtra(EXTRA_INTENT, browserIntent())
+                startActivity(chooserIntent)
                 true
             }
 
